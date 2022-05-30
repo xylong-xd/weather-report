@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>雾霾探测系统</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+    <link rel="stylesheet" href="css/style.css"/>
+
+</head>
+<body>
+<div class="title">
+    <h1>雾霾探测系统</h1>
+</div>
+<div class="contanier">
+    <div class="air">
+        <div class="position">
+            <h1 th:text="${address.getCity()}"></h1>
+        </div>
+        <div class="temperature">
+            <div class="temperature_1" th:text="${weather.getTemp()}"></div>
+            <div class="temperature_2">℃</div>
+        </div>
+        <div class="weather">
+            <p th:text="${weather.getText()}"></p>
+        </div>
+        <div class="time">
+            <p th:text="${weather.getUptime()}"></p>
+        </div>
+        <ul>
+            <li>
+                <div class="tigan1">体感温度</div>
+                <div class="tigan2 w" th:text="${weather.getFeels_like()}">℃</div>
+            </li>
+            <li>
+                <div class="shidu1">相对湿度</div>
+                <div class="shidu2 w" th:text="${weather.getRh()}"></div>
+            </li>
+            <li>
+                <div class="wuran1">空气污染指数</div>
+                <div class="wuran2 w " th:text="${weather.getAqi()}"></div>
+            </li>
+            <li>
+                <div class="fengji1">风级</div>
+                <div class="fengji2 w" th:text="${weather.getWind_class()}"></div>
+            </li>
+            <li>
+                <div class="fengxiang1">风向</div>
+                <div class="fengxiang2 w" th:text="${weather.getWind_dir()}"></div>
+            </li>
+        </ul>
+    </div>
+    <div class="t2_box_con" >
+        <!-- 此处加载图像 -->
+        <div id="rllfx" style="width: 1000px; height: 350px;"></div>
+
+    </div>
+</div>
+
+<div class="noneed">
+    <span class= "high" th:text="${HisMap.get(date.get(0)).getHigh()}"></span>
+    <span class="high" th:text="${HisMap.get(date.get(1)).getHigh()}"></span>
+    <span class="high" th:text="${HisMap.get(date.get(2)).getHigh()}"></span>
+    <span class="high" th:text="${HisMap.get(date.get(3)).getHigh()}"></span>
+    <span class="high" th:text="${HisMap.get(date.get(4)).getHigh()}"></span>
+    <span class="week" th:text="${HisMap.get(date.get(0)).getWeek()}"></span>
+    <span class="week" th:text="${HisMap.get(date.get(1)).getWeek()}"></span>
+    <span class="week" th:text="${HisMap.get(date.get(2)).getWeek()}"></span>
+    <span class="week" th:text="${HisMap.get(date.get(3)).getWeek()}"></span>
+    <span class="week" th:text="${HisMap.get(date.get(4)).getWeek()}"></span>
+    <span class="low" th:text="${HisMap.get(date.get(0)).getLow()}"></span>
+    <span class="low" th:text="${HisMap.get(date.get(1)).getLow()}"></span>
+    <span class="low" th:text="${HisMap.get(date.get(2)).getLow()}"></span>
+    <span class="low" th:text="${HisMap.get(date.get(3)).getLow()}"></span>
+    <span class="low" th:text="${HisMap.get(date.get(4)).getLow()}"></span>
+    <span id="change" th:text="${weather.getText()}"></span>
+</div>
+
+<script type="text/javascript">
+    var list_1 = document.querySelectorAll(".high");
+    high = [...list_1].map(element=>element.textContent);
+
+    var list_2 = document.querySelectorAll(".week");
+    week = [...list_2].map(element=>element.textContent);
+
+    var list_3 = document.querySelectorAll(".low");
+    low = [...list_3].map(element=>element.textContent);
+    window.onload = function (){
+        var change = document.getElementById("change");
+        var change_1 = change.innerText;
+        if(change_1 == '阴'|| change_1 == '多云'){
+            document.body.style.backgroundImage = "url(../img/2.jpg)";
+        }
+        else if(change_1 == '小雨' || change_1 == '中雨'){
+            document.body.style.backgroundImage = "url(../img/4.jpg)";
+        }else if(change_1 == '晴'){
+            document.body.style.backgroundImage = "url(../img/3.jpg";
+        }
+        // switch (change_1){
+        //     case '阴': document.body.style.background = "url(../img/1-1F5031539533c.jpg)";
+        //     case '多云': document.body.style.background = "url(../img/DAimG_2022040972722010RX44.jpg";
+        //     case '小雨': document.body.style.background = "url(../img/DAimG_2022040972722010RX44.jpg)";
+        //     case '晴': document.body.style.background = "url(../img/DAimG_2022040972722010RX44.jpg)";
+        //     case '中雨': document.body.style.background = "url(../img/DAimG_2022040972722010RX44.jpg)";
+        //     case '大雨': document.body.style.background = "url(../img/DAimG_2022040972722010RX44.jpg)";
+        //
+        // }
+    }
+
+
+    var rllfx = echarts.init(document.getElementById("rllfx"));
+    var option = {
+        /* 线条颜色，可设置多个颜色 */
+        color: ['#fff'],
+        /* 图像四周边距设置 */
+        grid: {
+            left: 30,
+            top: 30,
+            right: 20,
+            bottom: 30
+        },
+        /* 图例说明 */
+        legend: {
+            // 图例排项 vertical-"竖向"; horizontal-"横向"
+            orient: 'horizontal',
+            // 图例组件离容器左侧的距离
+            right: 100,
+            top: 0,
+            //图例文字的样式
+            textStyle: {
+                color: 'rgba(255, 215, 1, 0.59)',
+            },
+            // 与series中每个name一一对应
+            data: ['highTemp','lowTemp']
+
+        },
+
+        /* 鼠标悬浮时显示数据 */
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        xAxis: {
+            type: 'category',
+            data: week,
+            //设置轴线的属性
+            axisLine: {
+                show:false,
+                lineStyle: {
+                    color: 'rgba(255, 215, 1, 0.59)',
+                }
+            },
+            //调整x轴的lable
+            axisLabel: {
+                textStyle: {
+                    fontSize: 10 // 让字体变小
+                }
+            }
+        },
+        yAxis: {
+            type: 'value',
+            show:false,
+            // 控制网格线是否显示
+            splitLine: {
+                show: false,
+                //  改变轴线颜色
+                lineStyle: {
+                    // 使用深浅的间隔色
+                    color: ['#2953d0']
+                }
+            },
+            //设置轴线的属性
+            axisLine: {
+                show: false,
+                lineStyle: {
+                    color: '#fff',
+                }
+            }
+        },
+        /* 数据配置，若有多条折线则在数组中追加{name: , data: } */
+        series: [{
+            name: 'highTemp',
+            data: high,
+            type: 'line',
+            symbol: 'circle',
+            // 设置折点大小
+            symbolSize: 10,
+            // 设置为光滑曲线
+            smooth: false
+        },
+            {
+                name: 'lowTemp',
+                type: 'line',   //折线图
+                data: low,
+                symbol: 'circle',
+                // 设置折点大小
+                symbolSize: 10,
+                // 设置为光滑曲线
+                smooth: false
+            },
+            ,]
+
+    }
+    rllfx.setOption(option);
+</script>
+</body>
+</html>
